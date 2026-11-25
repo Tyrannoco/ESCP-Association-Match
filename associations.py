@@ -95,90 +95,40 @@ class Utilisateur :
     self.voyage = voyage
     self.diversite_internationale = diversite_internationale
 
-def demander_reponse(question, choix_valides):
-
-    while True:
-
-        reponse = input(question).strip().lower()
-
-        if reponse in choix_valides:
-            return reponse
-
-        print("Réponse invalide.")
-        print("Choix possibles :", choix_valides)
 
 def matching(utilisateur, associations):
 
-    meilleur_score = -1
-    meilleure_association = None
+    resultats = []
 
     for i in range(len(associations)):
 
+        association = associations[i]
         score = 0
 
-        if associations[i].categorie == utilisateur.categorie:
-            score += poids["categorie"]
+        if association.categorie == utilisateur.categorie:
+            score += 5
 
-        if associations[i].investissement == utilisateur.investissement:
-            score += poids["categorie"]
+        if association.investissement == utilisateur.investissement:
+            score += 1
 
-        if associations[i].cotisation == utilisateur.cotisation:
-            score += poids["categorie"]
+        if association.cotisation == utilisateur.cotisation:
+            score += 1
 
-        if associations[i].taille == utilisateur.taille:
-            score += poids["categorie"]
+        if association.taille == utilisateur.taille:
+            score += 1
 
-        if associations[i].experience_pro == utilisateur.experience_pro:
-            score += poids["categorie"]
+        if association.experience_pro == utilisateur.experience_pro:
+            score += 0.5
 
-        if associations[i].voyage == utilisateur.voyage:
-            score += poids["categorie"]
+        if association.voyage == utilisateur.voyage:
+            score += 1
 
-        if associations[i].diversite_internationale == utilisateur.diversite_internationale:
-            score += poids["categorie"]
+        if association.diversite_internationale == utilisateur.diversite_internationale:
+            score += 0.5
 
-        if score > meilleur_score:
-            meilleur_score = score
-            meilleure_association = associations[i]
+        resultats.append((association, score))
 
-    return meilleure_association, meilleur_score
+    resultats.sort(key=lambda x: x[1], reverse=True)
 
-def creer_utilisateur():
+    return resultats[:3]
 
-    investissement = demander_reponse("Investissement (faible/moyen/fort) : ",["faible", "moyen", "fort"])
-    voyage = demander_reponse("Voyage (oui/non) : ",["oui", "non"])
-    categorie = demander_reponse("Catégorie : (professionnelle, musique, société, culinaire) ", [ "professionnelle",
-    "vie de campus",
-    "artistique",
-    "musique",
-    "culturelle",
-    "humanitaire",
-    "société",
-    "sportive"])
-    cotisation = demander_reponse("Cotisation (faible, moyen, fort) : ",["faible","moyen","fort"])
-    taille = demander_reponse("Taille (grand, petit, moyen): ", ["grand", "petit","moyen"])
-    experience_pro = demander_reponse("Expérience professionnelle (fort, moyen, faible):", ["fort","moyen","faible"])
-    diversite = demander_reponse("Diversité internationale (oui,non)",["oui","non"])
-
-    return Utilisateur(
-        categorie,
-        investissement,
-        cotisation,
-        taille,
-        experience_pro,
-        voyage,
-        diversite
-    )
-# Création d'un utilisateur
-utilisateur1 = creer_utilisateur()
-
-# Recherche de la meilleure association
-association, score = matching(utilisateur1, associations)
-
-# Affichage du résultat
-score_max = sum(poids.values())
-pourcentage = (score / score_max) * 100
-
-print("Compatibilité :", pourcentage, "%")
-print("L'association qui vous correspond le mieux est :", association.nom)
-print("Votre score de compatibilité est :", pourcentage, "%")
